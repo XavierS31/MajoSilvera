@@ -5,3 +5,5 @@ dist/
 .env.local
 .aws-sam/
 coverage/
+company_info/
+*.pdf
