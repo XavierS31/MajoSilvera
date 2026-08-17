@@ -1,0 +1,4 @@
+import { Link } from 'react-router-dom'
+import { signOut } from '@/services/auth'
+
+export function AdminDashboard() { return <main className="admin"><div className="container"><p className="eyebrow">Administración</p><h1 className="section-title">Panel privado</h1><p className="soft-dark">Gestiona los servicios publicados y consulta la configuración operativa desde este acceso reservado.</p><div className="admin-card"><h2 className="display" style={{ marginTop: 0 }}>Servicios</h2><p className="soft-dark">Consulta la información que proviene directamente de Supabase y desactiva servicios cuando sea necesario.</p><Link className="button-gold" to="/admin/services">Gestionar servicios</Link></div><button type="button" className="danger" style={{ marginTop: '2rem' }} onClick={() => { signOut(); window.location.assign('/') }}>Cerrar sesión</button></div></main> }

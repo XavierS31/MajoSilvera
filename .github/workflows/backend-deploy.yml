@@ -1,0 +1,41 @@
+name: Deploy backend with AWS SAM
+
+on:
+  push:
+    branches: [main]
+    paths: ['backend/**', '.github/workflows/backend-deploy.yml']
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/setup-sam@v2
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Build Lambda container image
+        run: sam build --use-container
+      - name: Deploy SAM stack and push image to ECR
+        run: >-
+          sam deploy --stack-name majo-silvera-api --resolve-image-repos --capabilities CAPABILITY_IAM --no-fail-on-empty-changeset
+          --parameter-overrides
+          GoogleClientId="${{ secrets.GOOGLE_CLIENT_ID }}"
+          JwtSecret="${{ secrets.JWT_SECRET }}"
+          SupabaseUrl="${{ secrets.SUPABASE_URL }}"
+          SupabaseServiceRoleKey="${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}"
+          GeminiApiKey="${{ secrets.GEMINI_API_KEY }}"
+          CalendlySchedulingUrl="${{ secrets.CALENDLY_SCHEDULING_URL }}"
+          SesFromEmail="${{ secrets.SES_FROM_EMAIL }}"
+          SesToEmail="${{ secrets.SES_TO_EMAIL }}"
+      - name: Invalidate CDN cache
+        if: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID != '' }}
+        run: aws cloudfront create-invalidation --distribution-id "${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}" --paths '/api/*'

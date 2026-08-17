@@ -1,0 +1,10 @@
+import { useEffect, useState } from 'react'
+import { apiClient } from '@/services/apiClient'
+import { getSession } from '@/services/auth'
+
+type AdminService = { id: string; name: string; description: string; price: string; category?: string; active?: boolean }
+export function AdminServiceManager() { const [items, setItems] = useState<AdminService[]>([]); const [message, setMessage] = useState('Cargando servicios…'); const token = getSession()?.token
+  async function load() { try { const data = await apiClient<{ services: AdminService[] }>('/admin/services', {}, token); setItems(data.services); setMessage(data.services.length ? '' : 'No hay servicios para mostrar.') } catch (error) { setMessage(error instanceof Error ? error.message : 'No fue posible cargar los servicios.') } }
+  useEffect(() => { void load() }, [])
+  async function remove(id: string) { if (!window.confirm('¿Desactivar este servicio?')) return; try { await apiClient(`/admin/services/${id}`, { method: 'DELETE' }, token); setItems((current) => current.filter((item) => item.id !== id)); setMessage('Servicio desactivado.') } catch (error) { setMessage(error instanceof Error ? error.message : 'No fue posible actualizar el servicio.') } }
+  return <main className="admin"><div className="container"><p className="eyebrow">Administración</p><h1 className="section-title">Servicios</h1><p className="notice">Los cambios en esta pantalla requieren una sesión autorizada y se registran en Supabase.</p>{message && <p role="status">{message}</p>}{items.length > 0 && <div className="admin-card" style={{ overflowX: 'auto' }}><table className="admin-table"><thead><tr><th>Servicio</th><th>Categoría</th><th>Valor</th><th></th></tr></thead><tbody>{items.map((item) => <tr key={item.id}><td><strong>{item.name}</strong><br/><span>{item.description}</span></td><td>{item.category || '—'}</td><td>{item.price}</td><td><button className="danger" type="button" onClick={() => void remove(item.id)}>Desactivar</button></td></tr>)}</tbody></table></div>}</div></main> }

@@ -1,0 +1,55 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Majo Silvera Fisio Estetic secure API
+Globals:
+  Function:
+    Timeout: 20
+    MemorySize: 512
+    Environment:
+      Variables:
+        ADMIN_EMAIL: !Ref AdminEmail
+        GOOGLE_CLIENT_ID: !Ref GoogleClientId
+        JWT_SECRET: !Ref JwtSecret
+        SUPABASE_URL: !Ref SupabaseUrl
+        SUPABASE_SERVICE_ROLE_KEY: !Ref SupabaseServiceRoleKey
+        GEMINI_API_KEY: !Ref GeminiApiKey
+        GEMINI_MODEL: !Ref GeminiModel
+        CALENDLY_SCHEDULING_URL: !Ref CalendlySchedulingUrl
+        SES_FROM_EMAIL: !Ref SesFromEmail
+        SES_TO_EMAIL: !Ref SesToEmail
+Parameters:
+  AdminEmail: { Type: String, Default: xaviersotoba31@gmail.com }
+  GoogleClientId: { Type: String, NoEcho: true }
+  JwtSecret: { Type: String, NoEcho: true }
+  SupabaseUrl: { Type: String }
+  SupabaseServiceRoleKey: { Type: String, NoEcho: true }
+  GeminiApiKey: { Type: String, NoEcho: true }
+  GeminiModel: { Type: String, Default: gemini-2.0-flash }
+  CalendlySchedulingUrl: { Type: String }
+  SesFromEmail: { Type: String }
+  SesToEmail: { Type: String }
+Resources:
+  ApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      Architectures: [x86_64]
+      Policies:
+        - Statement:
+            Effect: Allow
+            Action: [ses:SendEmail, ses:SendRawEmail]
+            Resource: '*'
+      Events:
+        ApiRoute:
+          Type: HttpApi
+          Properties:
+            Path: /api/v1/{proxy+}
+            Method: ANY
+    Metadata:
+      DockerTag: latest
+      DockerContext: .
+      Dockerfile: Dockerfile
+Outputs:
+  ApiUrl:
+    Description: API Gateway URL
+    Value: !Sub 'https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/api/v1'
