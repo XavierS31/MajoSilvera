@@ -6,20 +6,28 @@
 
 .footer-inner {
   width: min(100% - 3rem, 1200px);
-  min-height: 112px;
+  min-height: 235px;
   margin: auto;
-  display: grid;
-  grid-template-columns: minmax(150px, 1fr) auto minmax(150px, 1fr);
-  align-items: center;
-  gap: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 3rem 0 1.25rem;
   font-size: .67rem;
   letter-spacing: .12em;
+}
+
+.footer-main {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(210px, .8fr) minmax(310px, 1.25fr) minmax(255px, .9fr);
+  align-items: center;
+  gap: 3rem;
 }
 
 .footer-brand {
   display: flex;
   align-items: center;
-  width: clamp(200px, 20vw, 255px);
+  width: clamp(215px, 20vw, 270px);
 }
 
 .footer-brand img {
@@ -50,25 +58,79 @@
 
 .footer-meta {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-end;
   justify-content: flex-end;
-  gap: .5rem;
+  gap: .85rem;
   text-align: right;
   line-height: 1.5;
 }
 
+.footer-contact-title {
+  margin: 0 0 .15rem;
+  color: #B8973A;
+  font-size: .62rem;
+  font-weight: 500;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+}
+
+.footer-socials {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: .4rem;
+  font-size: .62rem;
+  text-transform: uppercase;
+}
+
+.footer-socials a {
+  color: rgba(240, 235, 224, .76);
+  transition: color .2s ease;
+}
+
+.footer-socials a:hover {
+  color: #B8973A;
+}
+
+.footer-legal {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .35rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid rgba(184, 151, 58, .16);
+  color: rgba(240, 235, 224, .42);
+  font-size: .6rem;
+}
+
 @media (max-width: 1000px) {
   .footer-inner {
+    padding: 2.75rem 0 1.25rem;
+    text-align: center;
+  }
+
+  .footer-main {
     grid-template-columns: 1fr;
     justify-items: center;
-    gap: 1.25rem;
-    padding: 2rem 0;
-    text-align: center;
+    gap: 2rem;
   }
 
   .footer-meta {
     justify-content: center;
+    align-items: center;
     text-align: center;
+  }
+
+  .footer-socials {
+    justify-content: center;
+    align-items: center;
+  }
+
+  .footer-legal {
+    justify-content: center;
   }
 
   .footer-nav {

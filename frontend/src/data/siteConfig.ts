@@ -4,6 +4,7 @@ export const siteConfig = {
   city: 'Barranquilla, Colombia',
   whatsapp: '573002025284',
   instagram: '@majosilvera93',
+  tiktok: '@majosilvera93',
   email: 'hijuelos88@hotmail.com',
   address: 'Cra. 47 # 84-102 · Ed. Lanzarote, Apto 1C',
   adminEmail: 'xaviersotoba31@gmail.com',
@@ -26,6 +27,7 @@ export const navLinks = [
 export const contactDetails = [
   { label: 'WhatsApp', value: '300 202 5284', href: `https://wa.me/${siteConfig.whatsapp}` },
   { label: 'Instagram', value: siteConfig.instagram, href: 'https://www.instagram.com/majosilvera93/' },
+  { label: 'TikTok', value: siteConfig.tiktok, href: 'https://www.tiktok.com/@majosilvera93' },
   { label: 'Consultorio', value: siteConfig.address },
   { label: 'Correo', value: siteConfig.email, href: `mailto:${siteConfig.email}` },
 ]
