@@ -4,7 +4,7 @@ COPY package*.json ./
 RUN npm ci --omit=dev
 COPY tsconfig.json ./
 COPY src ./src
-RUN npm install --no-save typescript @types/node @types/aws-lambda @types/jsonwebtoken && npx tsc
+RUN npm install --no-save typescript @types/node @types/aws-lambda @types/jsonwebtoken @types/pg && npx tsc
 
 FROM public.ecr.aws/lambda/nodejs:20
 WORKDIR ${LAMBDA_TASK_ROOT}

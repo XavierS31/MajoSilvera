@@ -9,4 +9,5 @@ export function parseBody<T>(event: ApiEvent, schema: ZodType<T>): T {
   return result.data
 }
 
-export const safeText = (max: number) => z.string().trim().min(1).max(max).transform((value) => value.replace(/[<>]/g, ''))
+/** Strip markup/control characters before persistence; React still escapes all rendered values. */
+export const safeText = (max: number) => z.string().trim().min(1).max(max).transform((value) => value.replace(/<[^>]*>/g, '').replace(/[\u0000-\u001F\u007F]/g, ' ').replace(/\s+/g, ' ').trim())

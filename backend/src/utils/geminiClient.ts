@@ -1,10 +1,9 @@
-const systemPrompt = 'Eres el asistente de Majo Silvera Fisio Estetic en Barranquilla. Responde en español de forma cálida y breve. Orienta sobre navegación, servicios y cuidados generales. No diagnostiques, no prescribas ni prometas resultados; recomienda valoración profesional ante síntomas o dudas médicas.'
-
+/** Calls the isolated Python Gemini service; API keys never transit through clients. */
 export async function askGemini(message: string) {
-  const key = process.env.GEMINI_API_KEY; const model = process.env.GEMINI_MODEL || 'gemini-2.0-flash'
-  if (!key) throw new Error('SERVER_MISCONFIGURED')
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(key)}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ systemInstruction: { parts: [{ text: systemPrompt }] }, contents: [{ role: 'user', parts: [{ text: message }] }], generationConfig: { temperature: 0.4, maxOutputTokens: 350 } }) })
+  const url = process.env.CHATBOT_URL
+  if (!url) throw new Error('SERVER_MISCONFIGURED')
+  const response = await fetch(`${url.replace(/\/$/, '')}/chat`, { method: 'POST', headers: { 'content-type': 'application/json', ...(process.env.CHATBOT_SHARED_SECRET ? { 'x-chatbot-secret': process.env.CHATBOT_SHARED_SECRET } : {}) }, body: JSON.stringify({ message, max_output_tokens: Number.parseInt(process.env.CHATBOT_MAX_TOKENS || '300', 10) }) })
   if (!response.ok) throw new Error('AI_UNAVAILABLE')
-  const data = await response.json() as { candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }> }
-  return data.candidates?.[0]?.content?.parts?.[0]?.text || 'No pude responder en este momento. Escríbenos por WhatsApp para ayudarte.'
+  const data = await response.json() as { reply?: string }
+  return data.reply || 'No pude responder en este momento. Escríbenos por WhatsApp para ayudarte.'
 }
