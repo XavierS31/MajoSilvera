@@ -6,7 +6,7 @@ import { LockButton } from './LockButton'
 
 export function Footer() {
   const [showAuth, setShowAuth] = useState(false)
-  const footerLinks = [...navLinks, { label: 'Agendar cita', to: '/agendar' }]
+  const footerLinks = navLinks
 
   return <>
     <footer className="footer">
