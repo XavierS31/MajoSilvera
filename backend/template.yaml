@@ -19,6 +19,7 @@ Globals:
         RATE_LIMIT_MAX_REQUESTS: !Ref RateLimitMaxRequests
         CACHE_TTL_SECONDS: !Ref CacheTtlSeconds
         CALENDLY_SCHEDULING_URL: !Ref CalendlySchedulingUrl
+        CALENDLY_API_TOKEN: !Ref CalendlyApiToken
         SES_FROM_EMAIL: !Ref SesFromEmail
         SES_TO_EMAIL: !Ref SesToEmail
 Parameters:
@@ -34,6 +35,7 @@ Parameters:
   RateLimitMaxRequests: { Type: Number, Default: 5 }
   CacheTtlSeconds: { Type: Number, Default: 3600 }
   CalendlySchedulingUrl: { Type: String }
+  CalendlyApiToken: { Type: String, NoEcho: true }
   SesFromEmail: { Type: String }
   SesToEmail: { Type: String }
 Resources:

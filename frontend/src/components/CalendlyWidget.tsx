@@ -1,0 +1,31 @@
+import { useEffect, useMemo, useState } from 'react'
+import { apiClient } from '@/services/apiClient'
+
+type CalendlyWidgetProps = { service?: string; name?: string; email?: string }
+type CalendlyConfiguration = { schedulingUrl: string }
+
+export function CalendlyWidget({ service, name, email }: CalendlyWidgetProps) {
+  const [configuration, setConfiguration] = useState<CalendlyConfiguration>()
+  const [error, setError] = useState(false)
+
+  useEffect(() => {
+    let active = true
+    apiClient<CalendlyConfiguration>('/config/calendly').then((value) => {
+      if (active) setConfiguration(value)
+    }).catch(() => {
+      if (active) setError(true)
+    })
+    return () => { active = false }
+  }, [])
+
+  const source = useMemo(() => {
+    if (!configuration) return ''
+    const url = new URL(configuration.schedulingUrl)
+    if (service) url.searchParams.set('a1', service)
+    if (name) url.searchParams.set('name', name)
+    if (email) url.searchParams.set('email', email)
+    return url.toString()
+  }, [configuration, email, name, service])
+
+  return <section className="calendly-card" aria-labelledby="calendly-title"><p className="eyebrow">Agenda en línea</p><h2 id="calendly-title" className="calendly-title">Elige tu horario</h2>{error ? <p className="form-message">La agenda no está disponible ahora. Escríbenos por WhatsApp para ayudarte.</p> : !source ? <p className="form-message">Cargando horarios disponibles…</p> : <iframe className="calendly-frame" title="Agenda tu cita con Majo Silvera" src={source} loading="lazy" />}</section>
+}

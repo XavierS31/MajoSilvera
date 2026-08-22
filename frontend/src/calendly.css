@@ -1,0 +1,41 @@
+.contact-form-stack { display: grid; gap: 1.5rem; }
+
+.selected-service {
+  margin: 0 0 1.5rem;
+  padding: .8rem 1rem;
+  border-left: 2px solid #B8973A;
+  background: rgba(184, 151, 58, .1);
+  color: rgba(240, 235, 224, .82);
+  font-size: .82rem;
+  line-height: 1.5;
+}
+
+.calendly-card {
+  overflow: hidden;
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  border: 1px solid rgba(184, 151, 58, .52);
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(45, 40, 29, .96), rgba(26, 24, 18, .96));
+  box-shadow: 0 20px 45px rgba(0, 0, 0, .2);
+}
+
+.calendly-title {
+  margin: .65rem 0 1.25rem;
+  color: #F0EBE0;
+  font: 400 clamp(1.75rem, 3vw, 2.35rem)/1.1 'DM Serif Display', serif;
+}
+
+.calendly-frame {
+  width: 100%;
+  min-height: 700px;
+  border: 1px solid rgba(184, 151, 58, .25);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.package-contact { color: #B8973A; font-size: .66rem; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; }
+.package-contact:hover { color: #1A1812; }
+
+@media (max-width: 800px) {
+  .calendly-frame { min-height: 660px; }
+}
