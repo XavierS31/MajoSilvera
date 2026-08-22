@@ -27,5 +27,7 @@ export function CalendlyWidget({ service, name, email }: CalendlyWidgetProps) {
     return url.toString()
   }, [configuration, email, name, service])
 
-  return <section className="calendly-card" aria-labelledby="calendly-title"><p className="eyebrow">Agenda en línea</p><h2 id="calendly-title" className="calendly-title">Elige tu horario</h2>{error ? <p className="form-message">La agenda no está disponible ahora. Escríbenos por WhatsApp para ayudarte.</p> : !source ? <p className="form-message">Cargando horarios disponibles…</p> : <iframe className="calendly-frame" title="Agenda tu cita con Majo Silvera" src={source} loading="lazy" />}</section>
+  if (error) return <p className="form-message form-message-dark">La agenda no está disponible ahora. Escríbenos por WhatsApp para ayudarte.</p>
+  if (!source) return <p className="form-message form-message-dark">Cargando horarios disponibles…</p>
+  return <div className="calendly-embed"><iframe className="calendly-frame" title="Agenda tu cita con Majo Silvera" src={source} loading="lazy" scrolling="no" /></div>
 }

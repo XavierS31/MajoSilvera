@@ -6,9 +6,19 @@ import { database } from '../utils/database.js'
 
 const schema = z.object({ name: safeText(100), email: z.string().trim().email().max(254), phone: safeText(30), message: safeText(2500) })
 const ses = new SESClient({})
+
 export async function contact(event: ApiEvent) {
-  const data = parseBody(event, schema); const from = process.env.SES_FROM_EMAIL; const to = process.env.SES_TO_EMAIL
-  await database().query('INSERT INTO contact_messages (name, email, phone, message) VALUES ($1, $2, $3, $4)', [data.name, data.email, data.phone, data.message])
-  if (from && to) await ses.send(new SendEmailCommand({ Source: from, Destination: { ToAddresses: [to] }, ReplyToAddresses: [data.email], Message: { Subject: { Data: `Nuevo contacto web: ${data.name}`, Charset: 'UTF-8' }, Body: { Text: { Data: `Nombre: ${data.name}\nCorreo: ${data.email}\nTeléfono: ${data.phone}\n\nMensaje:\n${data.message}`, Charset: 'UTF-8' } } } }))
+  const data = parseBody(event, schema)
+  const from = process.env.SES_FROM_EMAIL
+  const to = process.env.SES_TO_EMAIL
+  const deliveries: Promise<unknown>[] = [database().query('INSERT INTO contact_messages (name, email, phone, message) VALUES ($1, $2, $3, $4)', [data.name, data.email, data.phone, data.message])]
+
+  if (from && to) {
+    deliveries.push(ses.send(new SendEmailCommand({ Source: from, Destination: { ToAddresses: [to] }, ReplyToAddresses: [data.email], Message: { Subject: { Data: `Nuevo contacto web: ${data.name}`, Charset: 'UTF-8' }, Body: { Text: { Data: `Nombre: ${data.name}\nCorreo: ${data.email}\nTeléfono: ${data.phone}\n\nMensaje:\n${data.message}`, Charset: 'UTF-8' } } } })))
+  }
+
+  const results = await Promise.allSettled(deliveries)
+  if (results.every((result) => result.status === 'rejected')) throw new Error('CONTACT_UNAVAILABLE')
+  if (results.some((result) => result.status === 'rejected')) console.warn('Contact delivery completed with a partial failure.')
   return { ok: true, message: 'Mensaje enviado.' }
 }

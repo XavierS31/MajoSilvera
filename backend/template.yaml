@@ -11,6 +11,8 @@ Globals:
         OAUTH2_CLIENT_ID: !Ref OAuth2ClientId
         OAUTH2_CLIENT_SECRET: !Ref OAuth2ClientSecret
         OAUTH2_TOKEN_INTROSPECT_URL: !Ref OAuth2TokenIntrospectUrl
+        OAUTH2_PROVIDER: !Ref OAuth2Provider
+        ADMIN_EMAIL: !Ref AdminEmail
         GEMINI_API_KEY: !Ref GeminiApiKey
         GEMINI_MODEL: !Ref GeminiModel
         CHATBOT_URL: !Ref ChatbotUrl
@@ -27,6 +29,8 @@ Parameters:
   OAuth2ClientId: { Type: String, NoEcho: true }
   OAuth2ClientSecret: { Type: String, NoEcho: true }
   OAuth2TokenIntrospectUrl: { Type: String }
+  OAuth2Provider: { Type: String, Default: google }
+  AdminEmail: { Type: String }
   GeminiApiKey: { Type: String, NoEcho: true }
   GeminiModel: { Type: String, Default: gemini-2.0-flash }
   ChatbotUrl: { Type: String }
