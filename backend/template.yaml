@@ -11,8 +11,6 @@ Globals:
         OAUTH2_CLIENT_ID: !Ref OAuth2ClientId
         OAUTH2_CLIENT_SECRET: !Ref OAuth2ClientSecret
         OAUTH2_TOKEN_INTROSPECT_URL: !Ref OAuth2TokenIntrospectUrl
-        OAUTH2_PROVIDER: !Ref OAuth2Provider
-        ADMIN_EMAIL: !Ref AdminEmail
         GEMINI_API_KEY: !Ref GeminiApiKey
         GEMINI_MODEL: !Ref GeminiModel
         CHATBOT_URL: !Ref ChatbotUrl
@@ -22,15 +20,11 @@ Globals:
         CACHE_TTL_SECONDS: !Ref CacheTtlSeconds
         CALENDLY_SCHEDULING_URL: !Ref CalendlySchedulingUrl
         CALENDLY_API_TOKEN: !Ref CalendlyApiToken
-        SES_FROM_EMAIL: !Ref SesFromEmail
-        SES_TO_EMAIL: !Ref SesToEmail
 Parameters:
   DatabaseUrl: { Type: String, NoEcho: true }
   OAuth2ClientId: { Type: String, NoEcho: true }
   OAuth2ClientSecret: { Type: String, NoEcho: true }
   OAuth2TokenIntrospectUrl: { Type: String }
-  OAuth2Provider: { Type: String, Default: google }
-  AdminEmail: { Type: String }
   GeminiApiKey: { Type: String, NoEcho: true }
   GeminiModel: { Type: String, Default: gemini-2.0-flash }
   ChatbotUrl: { Type: String }
@@ -40,19 +34,12 @@ Parameters:
   CacheTtlSeconds: { Type: Number, Default: 3600 }
   CalendlySchedulingUrl: { Type: String }
   CalendlyApiToken: { Type: String, NoEcho: true }
-  SesFromEmail: { Type: String }
-  SesToEmail: { Type: String }
 Resources:
   ApiFunction:
     Type: AWS::Serverless::Function
     Properties:
       PackageType: Image
       Architectures: [x86_64]
-      Policies:
-        - Statement:
-            Effect: Allow
-            Action: [ses:SendEmail, ses:SendRawEmail]
-            Resource: '*'
       Events:
         ApiRoute:
           Type: HttpApi

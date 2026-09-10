@@ -1,7 +1,7 @@
 import type { Handler } from 'aws-lambda'
 import type { ApiEvent, ApiResult } from './types.js'
 import { assertRateLimit } from './middleware/rateLimiter.js'
-import { oauthConfiguration, requireAdmin } from './middleware/authCheck.js'
+import { requireAdmin } from './middleware/authCheck.js'
 import { chat } from './handlers/chat.js'
 import { adminCatalog, createPackage, createService, deletePackage, deleteService, listPackages, listServices, updatePackage, updateService } from './handlers/catalog.js'
 import { listMessages } from './handlers/admin.js'
@@ -23,6 +23,7 @@ export const handler: Handler<ApiEvent, ApiResult> = async (event) => {
     if (method === 'GET' && path === '/services') return json(event, 200, await listServices())
     if (method === 'GET' && path === '/packages') return json(event, 200, await listPackages())
     if (method === 'GET' && path === '/admin/messages') { await requireAdmin(event); return json(event, 200, await listMessages()) }
+    if (method === 'GET' && path === '/admin/session') return json(event, 200, await requireAdmin(event))
     if (method === 'GET' && path === '/admin/services-packages') { await requireAdmin(event); return json(event, 200, await adminCatalog()) }
     if (method === 'POST' && path === '/admin/services') { await requireAdmin(event); return json(event, 201, await createService(event)) }
     if (method === 'POST' && path === '/admin/packages') { await requireAdmin(event); return json(event, 201, await createPackage(event)) }
@@ -30,7 +31,6 @@ export const handler: Handler<ApiEvent, ApiResult> = async (event) => {
     if (method === 'PUT' && /^\/admin\/packages\/[^/]+$/.test(path)) { await requireAdmin(event); return json(event, 200, await updatePackage(event)) }
     if (method === 'DELETE' && /^\/admin\/services\/[^/]+$/.test(path)) { await requireAdmin(event); return json(event, 200, await deleteService(event)) }
     if (method === 'DELETE' && /^\/admin\/packages\/[^/]+$/.test(path)) { await requireAdmin(event); return json(event, 200, await deletePackage(event)) }
-    if (method === 'GET' && path === '/config/auth') return json(event, 200, oauthConfiguration())
     if (method === 'GET' && path === '/config/calendly') return json(event, 200, calendlyConfiguration())
     if (method === 'POST' && path === '/booking/calendly') return json(event, 200, await scheduleCalendly(event))
     if (method === 'POST' && path === '/contact') return json(event, 200, await contact(event))
